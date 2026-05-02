@@ -1,0 +1,42 @@
+{
+  "entities": {
+    "feedback": {
+      "title": "Feedback",
+      "description": "User feedback on AI responses and application features.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Optional user ID if available"
+        },
+        "rating": {
+          "type": "integer",
+          "description": "Helpfulness rating (1-5)"
+        },
+        "comment": {
+          "type": "string",
+          "description": "Detailed feedback or suggestion"
+        },
+        "type": {
+          "type": "string",
+          "description": "Category of feedback: 'accuracy', 'improvement', 'helpfulness'"
+        },
+        "page": {
+          "type": "string",
+          "description": "The page path where the feedback was given"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["rating", "type", "createdAt"]
+    }
+  },
+  "firestore": {
+    "feedback/{feedbackId}": {
+      "schema": "feedback",
+      "description": "User feedback submissions"
+    }
+  }
+}
