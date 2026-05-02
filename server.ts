@@ -94,16 +94,37 @@ async function startServer() {
         officials: repResponse.data.officials || []
       });
     } catch (error: any) {
-      console.error("Civic API Error:", error.response?.data || error.message);
+      const apiError = error.response?.data?.error;
+      const errorMessage = apiError?.message || error.message || "Could not find election information.";
       
-      if (error.response?.status === 403) {
-        return res.status(403).json({ 
-          error: "API access forbidden. Please check your API key.",
-          type: "FORBIDDEN"
+      // Fallback to demo data if the API is broken, unconfigured, or forbidden
+      if (error.response?.status === 403 || error.response?.status === 400) {
+        console.warn(`[Civic API Warning] ${errorMessage}. Falling back to demo data.`);
+        return res.json({
+          voterInfo: {
+            state: [{
+              name: "California",
+              electionAdministrationBody: {
+                name: "California Secretary of State",
+                electionInfoUrl: "https://www.sos.ca.gov/elections",
+                electionRegistrationUrl: "https://registertovote.ca.gov/",
+                absenteeVotingInfoUrl: "https://www.sos.ca.gov/elections/voter-registration/vote-mail"
+              }
+            }]
+          },
+          officials: [
+            { name: "Sample: Governor of California", urls: ["https://www.gov.ca.gov/"] },
+            { name: "Sample: Secretary of State", urls: ["https://www.sos.ca.gov/"] }
+          ],
+          isDemo: true,
+          demoMessage: "Showing sample data because the Google Civic API is not fully configured for this project."
         });
       }
 
-      res.status(500).json({ error: "Could not find election information." });
+      res.status(error.response?.status || 500).json({ 
+        error: errorMessage,
+        details: apiError
+      });
     }
   });
 

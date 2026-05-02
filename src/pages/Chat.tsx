@@ -256,6 +256,8 @@ export default function Chat() {
         setLookupError("The Civic API key is not configured. Please set GOOGLE_CIVIC_API_KEY in the environment secrets.");
       } else if (err.response?.status === 404) {
         setLookupError("This address wasn't recognized. Please double-check your zip code or try searching by State instead.");
+      } else if (err.response?.status === 400 || err.response?.status === 500) {
+        setLookupError(errorData?.error || "The voter information service is currently unavailable. Please try again or visit USA.gov.");
       } else if (!window.navigator.onLine) {
         setLookupError("Network error. Please check your internet connection and try searching again.");
       } else {
