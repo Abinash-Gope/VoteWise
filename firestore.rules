@@ -28,5 +28,9 @@ service cloud.firestore {
       // No reading from client to ensure privacy and security
       allow read, update, delete: if false;
     }
+
+    match /test/connection {
+      allow read: if true;
+    }
   }
 }

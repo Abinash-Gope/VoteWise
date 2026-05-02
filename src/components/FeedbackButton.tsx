@@ -17,19 +17,10 @@ interface FirestoreErrorInfo {
   authInfo: any;
 }
 
-function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
-  const errInfo: FirestoreErrorInfo = {
-    error: error instanceof Error ? error.message : String(error),
-    authInfo: {
-      userId: auth.currentUser?.uid,
-      email: auth.currentUser?.email,
-      emailVerified: auth.currentUser?.emailVerified,
-    },
-    operationType,
-    path
-  };
-  console.error('Firestore Error: ', JSON.stringify(errInfo));
-  throw new Error(JSON.stringify(errInfo));
+function handleFirestoreError(error: any, operationType: OperationType, path: string | null) {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  console.error(`Firestore [${operationType}] at ${path} failed:`, errorMessage);
+  throw new Error(errorMessage);
 }
 
 export default function FeedbackButton() {
@@ -66,11 +57,10 @@ export default function FeedbackButton() {
         setComment("");
       }, 2000);
     } catch (error: any) {
-      console.error('Firestore Error: ', error);
-      if (!window.navigator.onLine) {
-        setErrorMessage("You appear to be offline. Please check your connection.");
-      } else {
-        setErrorMessage("We couldn't submit your feedback right now. Please try again in a few minutes.");
+      try {
+        handleFirestoreError(error, OperationType.WRITE, path);
+      } catch (e: any) {
+        setErrorMessage(`Feedback failed: ${e.message}`);
       }
     } finally {
       setIsSubmitting(false);

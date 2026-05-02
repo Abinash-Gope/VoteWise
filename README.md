@@ -5,8 +5,9 @@ VoteWise is an AI-powered election education assistant designed to help citizens
 ## Features
 
 - **Ask VoteWise AI**: A non-partisan chatbot that answers any question about the election process using factual data.
-- **Interactive Timeline**: A step-by-step journey through the 8 major stages of the U.S. Presidential election cycle.
-- **Knowledge Quiz**: Test your civic literacy with an 8-question quiz on voting laws and procedures.
+- **Interactive Timeline**: A step-by-step journey through the election cycles of the U.S. and India.
+- **Knowledge Quiz**: Test your civic literacy with questions on voting laws and procedures for multiple regions.
+- **Voter Lookup**: Find official registration links, state officials, and polling stations based on your location.
 - **Responsive Design**: Fully optimized for mobile, tablet, and desktop viewing.
 
 ## Tech Stack
@@ -42,9 +43,9 @@ VoteWise is an AI-powered election education assistant designed to help citizens
 
 ## Content Coverage
 
-VoteWise covers key topics including:
-- Voter registration requirements and deadlines.
-- Election Day procedures and polling station info.
-- The Electoral College and presidential nomination process.
-- Vote counting, auditing, and certification.
-- Voting rights history and ballot initiatives.
+VoteWise covers key topics across the US and India, including:
+- Voter registration requirements, deadlines, and official State CEO links.
+- Election Day procedures, EVM/VVPAT info (India), and polling station locators.
+- Presidential nomination processes and Lok Sabha/Vidhan Sabha cycles.
+- Official contact info for local election officials and election commissions.
+- Voting rights history and historical constitutional amendments.

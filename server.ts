@@ -21,8 +21,6 @@ async function startServer() {
     const apiKey = process.env.GOOGLE_CIVIC_API_KEY;
 
     if (country === "India") {
-      // For India, we provide state-level resources in the frontend
-      // and return some general national officials here to populate the UI.
       return res.json({ 
         indiaInfo: true, 
         message: "Use official ECI resources for local details.",
@@ -46,9 +44,7 @@ async function startServer() {
     }
 
     if (!apiKey) {
-      // PROD-LEVEL FALLBACK: If NO key is found, return dummy data for "90210" as a demo
-      // so the user can see the beautiful UI working even without secrets configured yet.
-      if (address.includes("90210") || address.toLowerCase().includes("california")) {
+      if (address?.includes("90210") || address?.toLowerCase().includes("california")) {
         return res.json({
           voterInfo: {
             state: [{
@@ -80,15 +76,10 @@ async function startServer() {
     }
 
     try {
-      // First, try voterinfo for general state/election rules
       const voterInfoResponse = await axios.get("https://www.googleapis.com/civicinfo/v2/voterinfo", {
-        params: {
-          address,
-          key: apiKey,
-        },
+        params: { address, key: apiKey },
       });
 
-      // Also get representatives for specific local officials
       const repResponse = await axios.get("https://www.googleapis.com/civicinfo/v2/representatives", {
         params: {
           address,
@@ -107,12 +98,12 @@ async function startServer() {
       
       if (error.response?.status === 403) {
         return res.status(403).json({ 
-          error: "API access forbidden. Please ensure the Civic Information API is enabled in your Google Cloud Console and that your API key is valid.",
+          error: "API access forbidden. Please check your API key.",
           type: "FORBIDDEN"
         });
       }
 
-      res.status(500).json({ error: "Could not find election information for that location. The service might be temporarily unavailable." });
+      res.status(500).json({ error: "Could not find election information." });
     }
   });
 
