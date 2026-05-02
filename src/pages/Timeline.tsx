@@ -15,7 +15,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 
-const stages = [
+const usStages = [
   {
     label: "Candidates Announce",
     timing: "12–18 months before",
@@ -114,16 +114,117 @@ const stages = [
   }
 ];
 
+const indiaStages = [
+  {
+    label: "Notification",
+    timing: "45-60 days before Poll",
+    icon: Megaphone,
+    description: "The President (for Lok Sabha) or Governor (for Vidhan Sabha) issues the official election notification on the advice of the Election Commission.",
+    keyFacts: [
+      "Official gazette notification",
+      "Model Code of Conduct starts",
+      "Election dates announced",
+      "Preparation of Voter Rolls"
+    ]
+  },
+  {
+    label: "Nominations",
+    timing: "8-10 days period",
+    icon: UserCheck,
+    description: "Candidates file their nomination papers and security deposits. Each candidate must provide affidavits regarding assets, criminal cases, and education.",
+    keyFacts: [
+      "Filing before Return Officer",
+      "Deposit of security fee",
+      "Disclosure of personal details",
+      "Proposer requirements"
+    ]
+  },
+  {
+    label: "Scrutiny & Withdrawal",
+    timing: "2-3 days following",
+    icon: ShieldCheck,
+    description: "Returning Officers examine nominations for validity. Candidates have a window to withdraw their names if they change their mind.",
+    keyFacts: [
+      "Validation of affidavits",
+      "Rejection of invalid forms",
+      "Final list of contestants",
+      "Allocation of symbols"
+    ]
+  },
+  {
+    label: "Campaign Period",
+    timing: "Minimum 14 days",
+    icon: Users,
+    description: "Political parties and candidates campaign to win votes. This is governed by strict rules on spending and public conduct.",
+    keyFacts: [
+      "Public rallies and manifestos",
+      "Door-to-door campaigning",
+      "Strict Code of Conduct oversight",
+      "Campaigning stops 48h before poll"
+    ]
+  },
+  {
+    label: "Poll Day",
+    timing: "Phased over several weeks",
+    icon: CheckCircle2,
+    description: "Millions of voters cast their ballots using Electronic Voting Machines (EVMs). VVPAT machines allow voters to verify their vote visually.",
+    keyFacts: [
+      "Use of EVMs and VVPATs",
+      "Polling station management",
+      "Indelible ink application",
+      "Security by observers"
+    ]
+  },
+  {
+    label: "Counting & Results",
+    timing: "Fixed date for all phases",
+    icon: Scale,
+    description: "Ballots/EVMs are counted at secure locations. The Election Commission declares the winner for each constituency.",
+    keyFacts: [
+      "Counting of postal ballots",
+      "EVM tabulation under surveillance",
+      "Result declaration certificates",
+      "VVPAT slip matching (random)"
+    ]
+  }
+];
+
 export default function Timeline() {
   const [currentStage, setCurrentStage] = useState(0);
+  const [region, setRegion] = useState<"US" | "India">("US");
   const navigate = useNavigate();
-  const stage = stages[currentStage];
+  
+  const stages = region === "US" ? usStages : indiaStages;
+  const stage = stages[currentStage] || stages[0];
+
+  // Reset stage when switching region
+  const handleRegionChange = (newRegion: "US" | "India") => {
+    setRegion(newRegion);
+    setCurrentStage(0);
+  };
 
   return (
     <div className="max-w-5xl mx-auto py-4">
       <div className="mb-12 text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">The Election Journey</h1>
-        <p className="text-gray-600">Follow the 8 major stages of the U.S. Presidential election cycle.</p>
+        <h1 className="text-4xl font-black text-gray-900 mb-6 tracking-tighter">The Election Journey</h1>
+        
+        <div className="flex inline-flex p-1 bg-gray-100 rounded-2xl mb-8">
+          {(["US", "India"] as const).map((r) => (
+            <button
+              key={r}
+              onClick={() => handleRegionChange(r)}
+              className={`px-8 py-2.5 text-xs font-black uppercase tracking-widest rounded-xl transition-all ${
+                region === r ? "bg-[#1e3a8a] text-white shadow-lg" : "text-gray-400 hover:text-gray-600"
+              }`}
+            >
+              {r === "US" ? "United States" : "India"}
+            </button>
+          ))}
+        </div>
+
+        <p className="text-gray-500 font-medium max-w-lg mx-auto">
+          Explore the major stages of the {region === "US" ? "U.S. Presidential" : "Indian General"} election cycle.
+        </p>
       </div>
 
       {/* Progress Bar */}

@@ -33,6 +33,44 @@ interface VoterInfo {
   }[];
 }
 
+const INDIA_STATE_CEO_LINKS: Record<string, string> = {
+  "Andhra Pradesh": "https://ceoandhra.nic.in/",
+  "Arunachal Pradesh": "https://ceoarunachal.nic.in/",
+  "Assam": "https://ceoassam.nic.in/",
+  "Bihar": "https://ceobihar.nic.in/",
+  "Chhattisgarh": "https://ceochhattisgarh.nic.in/",
+  "Goa": "https://ceogoa.nic.in/",
+  "Gujarat": "https://ceogujarat.nic.in/",
+  "Haryana": "https://ceoharyana.gov.in/",
+  "Himachal Pradesh": "https://ceohimachal.nic.in/",
+  "Jharkhand": "https://ceojharkhand.nic.in/",
+  "Karnataka": "https://ceo.karnataka.gov.in/",
+  "Kerala": "https://www.ceo.kerala.gov.in/",
+  "Madhya Pradesh": "https://ceomadhyapradesh.nic.in/",
+  "Maharashtra": "https://ceo.maharashtra.gov.in/",
+  "Manipur": "https://ceomanipur.nic.in/",
+  "Meghalaya": "https://ceomeghalaya.nic.in/",
+  "Mizoram": "https://ceomizoram.nic.in/",
+  "Nagaland": "https://ceonagaland.nic.in/",
+  "Odisha": "https://ceoodisha.nic.in/",
+  "Punjab": "https://ceopunjab.nic.in/",
+  "Rajasthan": "https://ceorajasthan.nic.in/",
+  "Sikkim": "https://ceosikkim.nic.in/",
+  "Tamil Nadu": "https://www.elections.tn.gov.in/",
+  "Telangana": "https://ceotelangana.nic.in/",
+  "Tripura": "https://ceotripura.nic.in/",
+  "Uttar Pradesh": "https://ceouttarpradesh.nic.in/",
+  "Uttarakhand": "https://ceouttarakhand.nic.in/",
+  "West Bengal": "https://ceowestbengal.nic.in/",
+  "Delhi": "https://ceodelhi.nic.in/",
+  "Jammu and Kashmir": "https://ceojk.nic.in/",
+  "Ladakh": "https://ceoladakh.nic.in/",
+  "Puducherry": "https://ceopuducherry.py.gov.in/",
+  "Chandigarh": "https://ceochandigarh.gov.in/",
+  "Andaman and Nicobar Islands": "https://ceoandaman.nic.in/",
+  "Lakshadweep": "https://ceolakshadweep.gov.in/"
+};
+
 const suggestionChips = [
   "How do I register to vote?",
   "What happens on Election Day?",
@@ -48,31 +86,35 @@ const US_STATES = [
   "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
 ];
 
+const INDIA_STATES = [
+  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", 
+  "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", 
+  "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal",
+  "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
+];
+
 const SYSTEM_PROMPT = `
 You are VoteWise, a friendly and neutral civic education assistant.
-Your mission is to help people of all ages understand how elections work.
+Your mission is to help people understand how elections work in the United States and India.
 
-TOPICS YOU COVER:
-- Voter registration (deadlines, requirements, online vs in-person)
-- Election Day procedures (polling stations, ID requirements, voting steps)
-- Types of elections: primary, general, midterm, local, federal
-- How votes are counted and results are certified
-- The Electoral College: what it is and how it works
-- Absentee and mail-in voting process
-- Candidate nomination and primary process
-- Campaign finance basics
-- Election security and integrity
-- Voting rights history and legislation
-- Ballot initiatives and referendums
-- How to find your polling place
+TOPICS YOU COVER (USA):
+- Voter registration (deadlines, online vs in-person)
+- Election Day procedures, ID requirements
+- Electoral College, primaries, caucuses
+- Absentee and mail-in voting
 
-RULES:
+TOPICS YOU COVER (INDIA):
+- Voter Helpline App and NVSP portal
+- Voter ID (EPIC card) and Aadhaar linking
+- Lok Sabha (General) and Rajya Sabha elections
+- Legislative Assembly (Vidhan Sabha) and Council (Vidhan Parishad)
+- Electronic Voting Machines (EVMs) and VVPAT
+- Model Code of Conduct
+
+GENERAL RULES:
 - Always be politically neutral — never favor any party, candidate, or ideology
-- Use simple, jargon-free language accessible to first-time voters
-- Keep answers under 150 words unless the user asks for more detail
-- Use numbered lists for step-by-step processes
-- Use bullet points for comparisons or lists of items
-- Always offer to explain further at the end of your response
+- Use simple, jargon-free language
+- Keep answers under 150 words
 - If asked about a specific candidate or party, redirect to facts about the process
 - Be encouraging — voting is a civic right worth celebrating
 `;
@@ -81,18 +123,21 @@ export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Hello! I'm VoteWise, your AI election education assistant. How can I help you understand the voting process today?",
+      content: "Hello! I'm VoteWise, your AI election education assistant. How can I help you understand the voting process in the US or India today?",
     },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showLookup, setShowLookup] = useState(false);
+  const [country, setCountry] = useState<"US" | "India">("US");
   const [zipCode, setZipCode] = useState("");
   const [selectedState, setSelectedState] = useState("");
   const [isSearchingZip, setIsSearchingZip] = useState(false);
   const [officials, setOfficials] = useState<Official[]>([]);
   const [voterInfo, setVoterInfo] = useState<VoterInfo | null>(null);
   const [lookupError, setLookupError] = useState("");
+  
+  const [isDemoData, setIsDemoData] = useState(false);
   
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -113,7 +158,7 @@ export default function Chat() {
 
     try {
       if (!process.env.GEMINI_API_KEY) {
-        throw new Error("GEMINI_API_KEY is not configured.");
+        throw new Error("MISSING_API_KEY");
       }
 
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -134,13 +179,28 @@ export default function Chat() {
 
       const reply = response.text || "I'm sorry, I couldn't generate a response.";
       setMessages([...updatedMessages, { role: "assistant", content: reply }]);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Chat error:", error);
+      
+      let errorMessage = "I'm sorry, I'm having trouble connecting to my knowledge base right now.";
+      
+      if (error.message === "MISSING_API_KEY") {
+        errorMessage = "Service configuration error. Please ensure the Gemini API key is set up in the environment settings.";
+      } else if (error.message?.includes("quota") || error.status === 429) {
+        errorMessage = "I've hit my usage limit for the moment. Please wait a minute and try your question again.";
+      } else if (error.message?.includes("safety") || error.status === 400) {
+        errorMessage = "I'm sorry, I can't answer that specific question. My purpose is to provide factual, non-partisan information about voting processes and civic education.";
+      } else if (!window.navigator.onLine) {
+        errorMessage = "It looks like you're offline. Please check your internet connection and try again.";
+      } else {
+        errorMessage = "An unexpected error occurred. Please try refreshing the page or asking your question again in a moment.";
+      }
+
       setMessages([
         ...updatedMessages,
         {
           role: "assistant",
-          content: "I'm sorry, I'm having trouble connecting to the AI service. Please make sure the API key is configured.",
+          content: errorMessage,
         },
       ]);
     } finally {
@@ -159,15 +219,28 @@ export default function Chat() {
     setVoterInfo(null);
 
     try {
-      const response = await axios.post("/api/voter-info", { address: query });
+      const response = await axios.post("/api/voter-info", { address: query, country });
       setOfficials(response.data.officials || []);
       setVoterInfo(response.data.voterInfo || null);
+      setIsDemoData(!!response.data.isDemo);
       
-      if (!response.data.officials?.length && !response.data.voterInfo?.state?.length) {
-        setLookupError("No specific information found for this location.");
+      if (!response.data.officials?.length && !response.data.voterInfo?.state?.length && !response.data.indiaInfo) {
+        setLookupError("We couldn't find specific officials or ballot info for that location. Some local data might be unavailable for this specific region.");
       }
-    } catch (err) {
-      setLookupError("Could not find information for that location. Please try a more specific address.");
+    } catch (err: any) {
+      const errorData = err.response?.data;
+      
+      if (err.response?.status === 403) {
+        setLookupError("API access is forbidden. Please verify the Google Civic Information API is enabled and the key is valid in the platform settings.");
+      } else if (errorData?.type === "CONFIG_ERROR") {
+        setLookupError("The Civic API key is not configured. Please set GOOGLE_CIVIC_API_KEY in the environment secrets.");
+      } else if (err.response?.status === 404) {
+        setLookupError("This address wasn't recognized. Please double-check your zip code or try searching by State instead.");
+      } else if (!window.navigator.onLine) {
+        setLookupError("Network error. Please check your internet connection and try searching again.");
+      } else {
+        setLookupError("The voter information service is currently unavailable. You can try again in a few minutes or visit USA.gov for standard voting info.");
+      }
     } finally {
       setIsSearchingZip(false);
     }
@@ -353,10 +426,31 @@ export default function Chat() {
                 </div>
 
                 <div className="p-5 md:p-8 overflow-y-auto">
+                  <div className="flex p-1 bg-gray-100 rounded-xl mb-6">
+                    {(["US", "India"] as const).map((c) => (
+                      <button
+                        key={c}
+                        onClick={() => {
+                          setCountry(c);
+                          setSelectedState("");
+                          setZipCode("");
+                          setVoterInfo(null);
+                          setOfficials([]);
+                          setLookupError("");
+                        }}
+                        className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${
+                          country === c ? "bg-white text-[#1e3a8a] shadow-sm" : "text-gray-400 hover:text-gray-600"
+                        }`}
+                      >
+                        {c}
+                      </button>
+                    ))}
+                  </div>
+
                   <div className="space-y-4 mb-8">
                     <div className="relative">
                       <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">
-                        Search by State
+                        Search by {country === "US" ? "State" : "State/UT"}
                       </label>
                       <div className="relative">
                         <select
@@ -364,8 +458,8 @@ export default function Chat() {
                           onChange={(e) => handleStateSelect(e.target.value)}
                           className="w-full px-4 py-3 bg-gray-50 border border-[#e4e4f0] rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none font-medium text-gray-800"
                         >
-                          <option value="">Select a State</option>
-                          {US_STATES.map(state => (
+                          <option value="">Select a {country === "US" ? "State" : "State/UT"}</option>
+                          {(country === "US" ? US_STATES : INDIA_STATES).map(state => (
                             <option key={state} value={state}>{state}</option>
                           ))}
                         </select>
@@ -386,7 +480,7 @@ export default function Chat() {
 
                     <form onSubmit={(e) => handleZipSearch(e)} className="flex flex-col">
                       <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">
-                        Search by Zip or Address
+                        {country === "US" ? "Search by Zip or Address" : "Search by Pin Code or District"}
                       </label>
                       <div className="flex space-x-2">
                         <input
@@ -396,7 +490,7 @@ export default function Chat() {
                             setZipCode(e.target.value);
                             setSelectedState("");
                           }}
-                          placeholder="e.g. 90210"
+                          placeholder={country === "US" ? "e.g. 90210" : "e.g. 110001"}
                           className="flex-grow px-4 py-3.5 bg-gray-50 border border-[#e4e4f0] rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
                         />
                         <button
@@ -407,12 +501,64 @@ export default function Chat() {
                           {isSearchingZip ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
                         </button>
                       </div>
+                      {country === "US" && !process.env.GOOGLE_CIVIC_API_KEY && (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          <button 
+                            type="button"
+                            onClick={() => { setZipCode("90210"); handleZipSearch(undefined, "90210"); }}
+                            className="text-[10px] font-bold text-blue-600 hover:underline"
+                          >
+                            Try Demo Zip: 90210
+                          </button>
+                        </div>
+                      )}
                     </form>
                   </div>
+
+                  {isDemoData && (
+                    <div className="mb-4 p-3 bg-amber-50 border border-amber-100 rounded-xl text-[10px] text-amber-700 font-bold uppercase tracking-wider flex items-center">
+                      <Sparkles className="w-3 h-3 mr-2 text-amber-500" />
+                      Notice: Showing Demo Data (API Key not configured)
+                    </div>
+                  )}
 
                   {lookupError && (
                     <div className="p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-sm mb-6">
                       {lookupError}
+                    </div>
+                  )}
+
+                  {/* India Specific Info */}
+                  {country === "India" && selectedState && !lookupError && (
+                    <div className="mb-6 space-y-4">
+                      <h4 className="text-sm font-bold text-gray-900 border-b pb-2">National & State Resources ({selectedState})</h4>
+                      <div className="grid grid-cols-1 gap-2">
+                        <a href="https://voters.eci.gov.in/" target="_blank" rel="noopener noreferrer" 
+                           className="flex items-center p-3 bg-blue-50 text-blue-700 rounded-xl hover:bg-blue-100 transition-colors">
+                          <Globe className="w-4 h-4 mr-3" />
+                          <span className="text-sm font-semibold">ECI Voter Service Portal</span>
+                        </a>
+                        {INDIA_STATE_CEO_LINKS[selectedState] && (
+                          <a href={INDIA_STATE_CEO_LINKS[selectedState]} target="_blank" rel="noopener noreferrer" 
+                             className="flex items-center p-3 bg-blue-50 text-blue-700 rounded-xl hover:bg-blue-100 transition-colors">
+                            <Globe className="w-4 h-4 mr-3" />
+                            <span className="text-sm font-semibold">State CEO Website</span>
+                          </a>
+                        )}
+                        <a href="https://voterportal.eci.gov.in/" target="_blank" rel="noopener noreferrer" 
+                           className="flex items-center p-3 bg-emerald-50 text-emerald-700 rounded-xl hover:bg-emerald-100 transition-colors">
+                          <CheckCircle className="w-4 h-4 mr-3" />
+                          <span className="text-sm font-semibold">Register as a New Voter</span>
+                        </a>
+                        <a href="https://wheredoivote.in/" target="_blank" rel="noopener noreferrer" 
+                           className="flex items-center p-3 bg-rose-50 text-rose-700 rounded-xl hover:bg-rose-100 transition-colors">
+                          <MapPin className="w-4 h-4 mr-3" />
+                          <span className="text-sm font-semibold">Find Your Polling Station</span>
+                        </a>
+                      </div>
+                      <p className="text-[10px] text-gray-400 mt-2 italic px-1">
+                        Note: For India, we provide direct links to the Election Commission of India (ECI) and State CEO for the most accurate local data.
+                      </p>
                     </div>
                   )}
 
@@ -442,6 +588,16 @@ export default function Chat() {
                             <span className="text-sm font-semibold">Absentee/Mail-in Info</span>
                           </a>
                         )}
+                        {/* Add Polling Place Finder for US */}
+                        <a 
+                          href={voterInfo.state[0].electionAdministrationBody?.votingLocationFinderUrl || "https://www.vote.org/polling-place-locator/"} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="flex items-center p-3 bg-rose-50 text-rose-700 rounded-xl hover:bg-rose-100 transition-colors"
+                        >
+                          <MapPin className="w-4 h-4 mr-3" />
+                          <span className="text-sm font-semibold">Find Your Polling Station</span>
+                        </a>
                       </div>
                     </div>
                   )}

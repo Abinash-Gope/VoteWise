@@ -58,7 +58,7 @@ export default function Home() {
           </h1>
           
           <p className="max-w-2xl mx-auto text-lg md:text-xl text-gray-600/90 mb-12 leading-relaxed font-medium">
-            VoteWise simplifies the complex machinery of democracy. Get factual, non-partisan guidance on registration, deadlines, and procedures.
+            VoteWise simplifies the complex machinery of democracy in the US and India. Get factual, non-partisan guidance on registration, deadlines, and procedures.
           </p>
           
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 md:gap-6">

@@ -39,6 +39,7 @@ export default function FeedbackButton() {
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const location = useLocation();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,6 +47,7 @@ export default function FeedbackButton() {
     if (rating === 0) return;
 
     setIsSubmitting(true);
+    setErrorMessage("");
     const path = "feedback";
     try {
       await addDoc(collection(db, path), {
@@ -63,8 +65,13 @@ export default function FeedbackButton() {
         setRating(0);
         setComment("");
       }, 2000);
-    } catch (error) {
-      handleFirestoreError(error, OperationType.WRITE, path);
+    } catch (error: any) {
+      console.error('Firestore Error: ', error);
+      if (!window.navigator.onLine) {
+        setErrorMessage("You appear to be offline. Please check your connection.");
+      } else {
+        setErrorMessage("We couldn't submit your feedback right now. Please try again in a few minutes.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -169,6 +176,16 @@ export default function FeedbackButton() {
                         className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[120px] text-sm font-medium"
                       />
                     </div>
+
+                    {errorMessage && (
+                      <motion.p 
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        className="text-xs font-bold text-rose-500 bg-rose-50 p-3 rounded-xl border border-rose-100"
+                      >
+                        {errorMessage}
+                      </motion.p>
+                    )}
 
                     <button
                       type="submit"

@@ -17,8 +17,63 @@ async function startServer() {
 
   // API to fetch voter information using Google Civic Information API
   app.post("/api/voter-info", async (req, res) => {
-    const { address } = req.body;
-    const apiKey = process.env.GOOGLE_CIVIC_API_KEY || "AIzaSyBtK5r79iH6C9um-FPy-zIxZMdlmMD2QtU";
+    const { address, country } = req.body;
+    const apiKey = process.env.GOOGLE_CIVIC_API_KEY;
+
+    if (country === "India") {
+      // For India, we provide state-level resources in the frontend
+      // and return some general national officials here to populate the UI.
+      return res.json({ 
+        indiaInfo: true, 
+        message: "Use official ECI resources for local details.",
+        officials: [
+          {
+            name: "Election Commission of India (ECI)",
+            urls: ["https://eci.gov.in/"],
+            emails: ["complaints@eci.gov.in"],
+            phones: ["1950"]
+          },
+          {
+            name: "President of India",
+            urls: ["https://presidentofindia.nic.in/"],
+          },
+          {
+            name: "Prime Minister of India",
+            urls: ["https://www.pmindia.gov.in/"],
+          }
+        ]
+      });
+    }
+
+    if (!apiKey) {
+      // PROD-LEVEL FALLBACK: If NO key is found, return dummy data for "90210" as a demo
+      // so the user can see the beautiful UI working even without secrets configured yet.
+      if (address.includes("90210") || address.toLowerCase().includes("california")) {
+        return res.json({
+          voterInfo: {
+            state: [{
+              name: "California",
+              electionAdministrationBody: {
+                name: "California Secretary of State",
+                electionInfoUrl: "https://www.sos.ca.gov/elections",
+                electionRegistrationUrl: "https://registertovote.ca.gov/",
+                absenteeVotingInfoUrl: "https://www.sos.ca.gov/elections/voter-registration/vote-mail"
+              }
+            }]
+          },
+          officials: [
+            { name: "Sample: Governor of California", urls: ["https://www.gov.ca.gov/"] },
+            { name: "Sample: Secretary of State", urls: ["https://www.sos.ca.gov/"] }
+          ],
+          isDemo: true
+        });
+      }
+
+      return res.status(500).json({ 
+        error: "Google Civic API key is not configured. Please set GOOGLE_CIVIC_API_KEY in the environment settings.",
+        type: "CONFIG_ERROR"
+      });
+    }
 
     if (!address) {
       return res.status(400).json({ error: "Address/Zip code or State is required" });
@@ -30,7 +85,6 @@ async function startServer() {
         params: {
           address,
           key: apiKey,
-          // Use a recent election ID if available, or it defaults to the next relevant one
         },
       });
 
@@ -48,9 +102,17 @@ async function startServer() {
         voterInfo: voterInfoResponse.data,
         officials: repResponse.data.officials || []
       });
-    } catch (error) {
-      console.error("Civic API Error:", error);
-      res.status(500).json({ error: "Could not find election information for that location." });
+    } catch (error: any) {
+      console.error("Civic API Error:", error.response?.data || error.message);
+      
+      if (error.response?.status === 403) {
+        return res.status(403).json({ 
+          error: "API access forbidden. Please ensure the Civic Information API is enabled in your Google Cloud Console and that your API key is valid.",
+          type: "FORBIDDEN"
+        });
+      }
+
+      res.status(500).json({ error: "Could not find election information for that location. The service might be temporarily unavailable." });
     }
   });
 

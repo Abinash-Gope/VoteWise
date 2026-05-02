@@ -13,17 +13,17 @@ const quizData = [
       "The second Tuesday of November"
     ],
     correctIndex: 2,
-    explanation: "Since 1845, federal law has fixed Election Day as the first Tuesday after the first Monday in November.",
+    explanation: "Since 1845, federal law has fixed Election Day as the first Tuesday after the first Monday in November. This specific timing was chosen to avoid November 1st (All Saints' Day) and to allow farmers time to travel to polling places after the autumn harvest but before winter weather made travel difficult.",
     link: "https://www.usa.gov/election-day",
-    linkText: "USA.gov: Election Day"
+    linkText: "USA.gov: Election Day Rules"
   },
   {
     question: "What is the minimum voting age in the US?",
     options: ["16 years old", "18 years old", "21 years old", "Graduation from high school"],
     correctIndex: 1,
-    explanation: "The 26th Amendment, ratified in 1971, lowered the minimum voting age from 21 to 18.",
+    explanation: "The 26th Amendment, ratified in 1971, lowered the minimum voting age from 21 to 18. This change was largely driven by the 'Old Enough to Fight, Old Enough to Vote' movement during the Vietnam War, arguing that those being drafted should have a say in their government.",
     link: "https://www.usa.gov/who-can-vote",
-    linkText: "USA.gov: Who Can Vote"
+    linkText: "USA.gov: Voting Qualifications"
   },
   {
     question: "What is the Electoral College?",
@@ -34,9 +34,9 @@ const quizData = [
       "The list of candidates on the ballot"
     ],
     correctIndex: 1,
-    explanation: "The Electoral College consists of 538 electors who cast the final ballots that determine the President and Vice President.",
+    explanation: "The Electoral College is not a physical place, but a process. It consists of 538 electors—one for each member of the House and Senate, plus three for D.C. While most states use a 'winner-take-all' system, the electors are the ones who officially cast the final ballots for President and Vice President in December.",
     link: "https://www.usa.gov/electoral-college",
-    linkText: "USA.gov: Electoral College"
+    linkText: "USA.gov: How the Electoral College Works"
   },
   {
     question: "What is a primary election?",
@@ -47,17 +47,17 @@ const quizData = [
       "The final election of the year"
     ],
     correctIndex: 2,
-    explanation: "Primaries allow party members to vote for their preferred candidate to represent the party on the general ballot.",
+    explanation: "Primaries and caucuses are preliminary elections where voters choose which candidate will represent a specific political party in the general election. Unlike the general election which decides the office winner, the primary is an internal party filtering process.",
     link: "https://www.usa.gov/primaries-caucuses",
-    linkText: "USA.gov: Primaries and Caucuses"
+    linkText: "USA.gov: Primaries vs Caucuses"
   },
   {
     question: "How many senators does each US state have?",
     options: ["Based on population", "1", "2", "4"],
     correctIndex: 2,
-    explanation: "Regardless of size or population, every US state is constitutionally represented by exactly 2 senators.",
+    explanation: "To ensure equal representation for all states regardless of their size, the Constitution mandates exactly 2 senators per state. This differs from the House of Representatives, where the number of seats is based on each state's population as determined by the Census.",
     link: "https://www.senate.gov/senators/index.htm",
-    linkText: "Senate.gov: About Senators"
+    linkText: "Senate.gov: About the U.S. Senate"
   },
   {
     question: "What is an absentee ballot?",
@@ -68,25 +68,59 @@ const quizData = [
       "A ballot used only in local elections"
     ],
     correctIndex: 2,
-    explanation: "Absentee voting allows voters to participate without being physically present at a polling station on Election Day.",
+    explanation: "Absentee or 'mail-in' voting allows registered voters to cast their ballot without going to a physical polling place on Election Day. While originally for soldiers or the ill, most states now allow any registered voter to request one to improve accessibility and turnout.",
     link: "https://www.usa.gov/absentee-voting",
-    linkText: "USA.gov: Absentee Voting"
+    linkText: "USA.gov: Guide to Absentee Voting"
   },
   {
     question: "Which amendment guarantees the right to vote regardless of race?",
     options: ["1st Amendment", "15th Amendment", "19th Amendment", "2th Amendment"],
     correctIndex: 1,
-    explanation: "The 15th Amendment, ratified in 1870, prohibits federal or state governments from denying a citizen the right to vote based on race.",
+    explanation: "The 15th Amendment (1870) prohibits denying the right to vote based on 'race, color, or previous condition of servitude.' However, it wasn't until the Voting Rights Act of 1965 that many legal loopholes used to circumvent this amendment (like poll taxes and literacy tests) were finally abolished.",
     link: "https://www.archives.gov/founding-docs/amendment-15",
-    linkText: "Archives.gov: 15th Amendment"
+    linkText: "Archives.gov: The 15th Amendment"
   },
   {
     question: "How long is a US Presidential term?",
     options: ["2 years", "4 years", "6 years", "8 years"],
     correctIndex: 1,
-    explanation: "The President serves a 4-year term and is limited to two terms by the 22nd Amendment.",
+    explanation: "The President serving a 4-year term was established in Article II of the Constitution. The 22nd Amendment, passed after Franklin D. Roosevelt's four-term presidency, now limits any individual to serving only two full terms (8 years total).",
     link: "https://www.usa.gov/presidents",
-    linkText: "USA.gov: About the President"
+    linkText: "USA.gov: Presidential Terms & Limits"
+  },
+  {
+    question: "What is the minimum voting age in India?",
+    options: ["16 years old", "18 years old", "21 years old", "25 years old"],
+    correctIndex: 1,
+    explanation: "The voting age in India was lowered from 21 to 18 years in 1989 by the 61st Constitutional Amendment Act. This was done to encourage greater participation of the youth in the democratic process.",
+    link: "https://voters.eci.gov.in/",
+    linkText: "ECI: Voter Eligibility"
+  },
+  {
+    question: "What does EVM stand for in Indian elections?",
+    options: [
+      "Electric Voter Meter",
+      "Electronic Voting Machine",
+      "Election Verification Module",
+      "Every Vote Matters"
+    ],
+    correctIndex: 1,
+    explanation: "EVM stands for Electronic Voting Machine. India transitioned from paper ballots to EVMs to speed up the counting process and reduce manual errors and paper waste. They were first used in all constituencies during the 2004 General Elections.",
+    link: "https://www.eci.gov.in/evm/",
+    linkText: "ECI: About EVMs"
+  },
+  {
+    question: "Which constitutional body conducts elections in India?",
+    options: [
+      "Supreme Court of India",
+      "The Parliament",
+      "Election Commission of India",
+      "Ministry of Home Affairs"
+    ],
+    correctIndex: 2,
+    explanation: "The Election Commission of India (ECI) is an autonomous constitutional authority responsible for administering Union and State election processes in India. It oversees everything from voter registration to the declaration of results.",
+    link: "https://www.eci.gov.in/",
+    linkText: "ECI Official Website"
   }
 ];
 
@@ -292,12 +326,12 @@ export default function Quiz() {
                       href={(q as any).link} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="inline-flex items-center mt-4 text-xs font-black uppercase tracking-widest text-blue-300 hover:text-white transition-colors group/link"
+                      className="inline-flex items-center mt-6 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-black uppercase tracking-widest text-white transition-all group/link border border-white/10"
                     >
-                      <span className="border-b border-blue-400 pb-0.5 group-hover/link:border-white">
-                        {(q as any).linkText || "Source Document"}
+                      <span className="mr-3">
+                        {(q as any).linkText || "Official Resource"}
                       </span>
-                      <ExternalLink className="w-3 h-3 ml-2" />
+                      <ExternalLink className="w-4 h-4 text-blue-300 group-hover/link:text-white transition-colors" />
                     </a>
                   )}
                 </div>
