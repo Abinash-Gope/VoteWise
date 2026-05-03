@@ -175,7 +175,7 @@ export default function Quiz() {
     }
 
     return (
-      <div className="max-w-3xl mx-auto py-8 px-4">
+      <div className="w-full max-w-3xl mx-auto pb-8">
         <motion.div
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -235,8 +235,8 @@ export default function Quiz() {
   const q = quizData[currentQ];
 
   return (
-    <div className="max-w-3xl mx-auto py-4 px-4 md:px-0">
-      <div className="mb-8 md:mb-12">
+    <div className="w-full max-w-3xl mx-auto pb-8">
+      <div className="mb-6 md:mb-12">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
           <div className="flex items-center">
             <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center mr-3">
@@ -266,87 +266,89 @@ export default function Quiz() {
         </h1>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 md:gap-4 mb-8">
-        {q.options.map((option, idx) => {
-          const isSelected = selectedAnswer === idx;
-          const isCorrect = q.correctIndex === idx;
-          const showColors = selectedAnswer !== null;
+      <div>
+        <div className="grid grid-cols-1 gap-3 md:gap-4 mb-8">
+          {q.options.map((option, idx) => {
+            const isSelected = selectedAnswer === idx;
+            const isCorrect = q.correctIndex === idx;
+            const showColors = selectedAnswer !== null;
 
-          return (
-            <motion.button
-              key={idx}
-              whileTap={{ scale: 0.98 }}
-              disabled={showColors}
-              onClick={() => handleAnswerSelect(idx)}
-              className={`w-full text-left p-4 md:p-6 rounded-2xl md:rounded-3xl border-2 transition-all flex items-center justify-between ${
-                showColors
-                  ? isCorrect
-                    ? "bg-emerald-50 border-emerald-500 text-emerald-900 shadow-lg shadow-emerald-900/5 ring-4 ring-emerald-100"
-                    : isSelected
-                    ? "bg-rose-50 border-rose-500 text-rose-900 ring-4 ring-rose-100"
-                    : "bg-gray-50/50 border-gray-100 opacity-40"
-                  : "bg-white border-[#e4e4f0] hover:border-blue-400 hover:bg-blue-50/10 shadow-sm hover:shadow-md"
-              }`}
-            >
-              <div className="flex items-center pr-4">
-                <span className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex-shrink-0 flex items-center justify-center mr-4 md:mr-6 font-black text-sm md:text-base transition-colors ${
-                  showColors && isCorrect ? "bg-emerald-500 text-white" : "bg-gray-100 text-gray-400"
-                }`}>
-                  {String.fromCharCode(65 + idx)}
-                </span>
-                <span className="font-bold text-base md:text-lg tracking-tight">{option}</span>
-              </div>
-              {showColors && isCorrect && <CheckCircle className="w-6 h-6 text-emerald-600 flex-shrink-0" />}
-              {showColors && isSelected && !isCorrect && <XCircle className="w-6 h-6 text-rose-600 flex-shrink-0" />}
-            </motion.button>
-          );
-        })}
-      </div>
-
-      <AnimatePresence>
-        {selectedAnswer !== null && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-[#1e3a8a] text-white rounded-2xl md:rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden mb-12"
-          >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full translate-x-16 -translate-y-16 blur-xl" />
-            <div className="relative z-10">
-              <div className="flex items-start mb-6">
-                <div className="p-2 bg-white/10 rounded-lg mr-4 mt-1">
-                  <HelpCircle className="w-5 h-5 text-blue-200" />
-                </div>
-                <div>
-                  <p className="font-black text-blue-100 uppercase text-[10px] tracking-[0.2em] mb-2 leading-none">Perspective</p>
-                  <p className="text-base md:text-lg font-medium leading-relaxed opacity-95">
-                    {q.explanation}
-                  </p>
-                  {(q as any).link && (
-                    <a 
-                      href={(q as any).link} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center mt-6 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-black uppercase tracking-widest text-white transition-all group/link border border-white/10"
-                    >
-                      <span className="mr-3">
-                        {(q as any).linkText || "Official Resource"}
-                      </span>
-                      <ExternalLink className="w-4 h-4 text-blue-300 group-hover/link:text-white transition-colors" />
-                    </a>
-                  )}
-                </div>
-              </div>
-              <button
-                onClick={nextQuestion}
-                className="w-full flex items-center justify-center py-4 md:py-5 bg-white text-[#1e3a8a] rounded-xl md:rounded-2xl font-black text-sm md:text-base hover:bg-blue-50 transition-all shadow-xl active:scale-95"
+            return (
+              <motion.button
+                key={idx}
+                whileTap={{ scale: 0.98 }}
+                disabled={showColors}
+                onClick={() => handleAnswerSelect(idx)}
+                className={`w-full text-left p-4 md:p-6 rounded-2xl md:rounded-3xl border-2 transition-all flex items-center justify-between ${
+                  showColors
+                    ? isCorrect
+                      ? "bg-emerald-50 border-emerald-500 text-emerald-900 shadow-lg shadow-emerald-900/5 ring-4 ring-emerald-100"
+                      : isSelected
+                      ? "bg-rose-50 border-rose-500 text-rose-900 ring-4 ring-rose-100"
+                      : "bg-gray-50/50 border-gray-100 opacity-40"
+                    : "bg-white border-[#e4e4f0] hover:border-blue-400 hover:bg-blue-50/10 shadow-sm hover:shadow-md"
+                }`}
               >
-                {currentQ === quizData.length - 1 ? "Complete Journey" : "Next Challenge"}
-                <ArrowRight className="ml-3 w-5 h-5" />
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                <div className="flex items-center pr-4">
+                  <span className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex-shrink-0 flex items-center justify-center mr-4 md:mr-6 font-black text-sm md:text-base transition-colors ${
+                    showColors && isCorrect ? "bg-emerald-500 text-white" : "bg-gray-100 text-gray-400"
+                  }`}>
+                    {String.fromCharCode(65 + idx)}
+                  </span>
+                  <span className="font-bold text-base md:text-lg tracking-tight">{option}</span>
+                </div>
+                {showColors && isCorrect && <CheckCircle className="w-6 h-6 text-emerald-600 flex-shrink-0" />}
+                {showColors && isSelected && !isCorrect && <XCircle className="w-6 h-6 text-rose-600 flex-shrink-0" />}
+              </motion.button>
+            );
+          })}
+        </div>
+
+        <AnimatePresence>
+          {selectedAnswer !== null && (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-[#1e3a8a] text-white rounded-2xl md:rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden mb-4"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full translate-x-16 -translate-y-16 blur-xl" />
+              <div className="relative z-10">
+                <div className="flex items-start mb-6">
+                  <div className="p-2 bg-white/10 rounded-lg mr-4 mt-1">
+                    <HelpCircle className="w-5 h-5 text-blue-200" />
+                  </div>
+                  <div>
+                    <p className="font-black text-blue-100 uppercase text-[10px] tracking-[0.2em] mb-2 leading-none">Perspective</p>
+                    <p className="text-base md:text-lg font-medium leading-relaxed opacity-95">
+                      {q.explanation}
+                    </p>
+                    {(q as any).link && (
+                      <a 
+                        href={(q as any).link} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center mt-6 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-black uppercase tracking-widest text-white transition-all group/link border border-white/10"
+                      >
+                        <span className="mr-3">
+                          {(q as any).linkText || "Official Resource"}
+                        </span>
+                        <ExternalLink className="w-4 h-4 text-blue-300 group-hover/link:text-white transition-colors" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+                <button
+                  onClick={nextQuestion}
+                  className="w-full flex items-center justify-center py-4 md:py-5 bg-white text-[#1e3a8a] rounded-xl md:rounded-2xl font-black text-sm md:text-base hover:bg-blue-50 transition-all shadow-xl active:scale-95"
+                >
+                  {currentQ === quizData.length - 1 ? "Complete Journey" : "Next Challenge"}
+                  <ArrowRight className="ml-3 w-5 h-5" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

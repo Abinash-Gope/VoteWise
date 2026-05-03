@@ -275,7 +275,7 @@ export default function Chat() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto flex flex-col h-[calc(100vh-6rem)] md:h-[calc(100vh-8rem)]">
+    <div className="w-full max-w-4xl mx-auto flex flex-col h-[calc(100dvh-100px)] md:h-[calc(100dvh-130px)] pt-2 md:pt-0">
       <div className="mb-4 md:mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 flex items-center">
@@ -293,11 +293,11 @@ export default function Chat() {
         </button>
       </div>
 
-      <div className="flex-grow bg-white rounded-2xl shadow-xl shadow-blue-900/5 border border-[#e4e4f0] overflow-hidden flex flex-col relative">
+      <div className="flex-grow bg-white rounded-2xl shadow-xl shadow-blue-900/5 border border-[#e4e4f0] flex flex-col relative min-h-0 overflow-hidden">
         {/* Chat Messages */}
         <div
           ref={scrollRef}
-          className="flex-grow p-4 md:p-6 overflow-y-auto space-y-6 scroll-smooth"
+          className="flex-grow p-4 md:p-6 overflow-y-auto space-y-6 scroll-smooth min-h-0"
         >
           {messages.map((m, index) => (
             <motion.div
@@ -322,7 +322,7 @@ export default function Chat() {
                     </span>
                   </div>
                 )}
-                <div className="leading-relaxed">
+                <div className="leading-relaxed break-words overflow-hidden">
                   {m.role === "assistant" ? (
                     <div className="markdown-body">
                       <Markdown remarkPlugins={[remarkGfm]}>{m.content}</Markdown>
@@ -488,7 +488,7 @@ export default function Chat() {
                           <select
                             value={selectedState}
                             onChange={(e) => handleStateSelect(e.target.value)}
-                            className="w-full px-5 py-4 bg-gray-50 border-2 border-[#e4e4f0] rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 appearance-none font-bold text-gray-800 transition-all cursor-pointer hover:bg-white"
+                            className="w-full px-4 sm:px-5 py-3.5 sm:py-4 bg-gray-50 border-2 border-[#e4e4f0] rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 appearance-none font-bold text-gray-800 transition-all cursor-pointer hover:bg-white text-sm sm:text-base pr-12"
                           >
                             <option value="">Select a {country === "US" ? "State" : "State/UT"}</option>
                             {(country === "US" ? US_STATES : INDIA_STATES).map(state => (
@@ -514,7 +514,7 @@ export default function Chat() {
                         <label className="block text-xs font-black text-gray-900 uppercase tracking-widest mb-3 ml-1 opacity-50">
                           {country === "US" ? "Search by Zip or Address" : "Search by Pin Code or District"}
                         </label>
-                        <div className="flex space-x-3">
+                        <div className="flex flex-col sm:flex-row gap-3 w-full">
                           <input
                             type="text"
                             value={zipCode}
@@ -523,14 +523,15 @@ export default function Chat() {
                               setSelectedState("");
                             }}
                             placeholder={country === "US" ? "e.g. 90210" : "e.g. 110001"}
-                            className="flex-grow px-5 py-4 bg-gray-50 border-2 border-[#e4e4f0] rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 font-bold text-gray-800 placeholder:text-gray-300 transition-all"
+                            className="flex-grow w-full px-4 sm:px-5 py-3.5 sm:py-4 bg-gray-50 border-2 border-[#e4e4f0] rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 font-bold text-sm sm:text-base text-gray-800 placeholder:text-gray-400 transition-all"
                           />
                           <button
                             type="submit"
                             disabled={isSearchingZip || !zipCode.trim()}
-                            className="flex-shrink-0 w-16 h-16 flex items-center justify-center bg-[#1e3a8a] text-white rounded-2xl shadow-xl shadow-blue-900/10 hover:bg-blue-800 disabled:opacity-50 transition-all active:scale-95"
+                            className="w-full sm:w-auto px-6 py-3.5 sm:py-4 flex items-center justify-center bg-[#1e3a8a] text-white border-2 border-transparent rounded-2xl shadow-xl shadow-blue-900/10 hover:bg-blue-800 disabled:opacity-50 transition-all active:scale-95 font-bold whitespace-nowrap"
                           >
-                            {isSearchingZip ? <Loader2 className="w-6 h-6 animate-spin" /> : <Search className="w-6 h-6" />}
+                            {isSearchingZip ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Search className="w-5 h-5 mr-2" />}
+                            Search
                           </button>
                         </div>
                         {country === "US" && !process.env.GOOGLE_CIVIC_API_KEY && (

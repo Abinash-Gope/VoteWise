@@ -204,11 +204,11 @@ export default function Timeline() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto py-4">
-      <div className="mb-12 text-center">
-        <h1 className="text-4xl font-black text-gray-900 mb-6 tracking-tighter">The Election Journey</h1>
+    <div className="w-full max-w-5xl mx-auto pb-8">
+      <div className="mb-8 md:mb-12 text-center">
+        <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 md:mb-6 tracking-tighter">The Election Journey</h1>
         
-        <div className="flex inline-flex p-1 bg-gray-100 rounded-2xl mb-8">
+        <div className="inline-flex p-1 bg-gray-100 rounded-2xl mb-8">
           {(["US", "India"] as const).map((r) => (
             <button
               key={r}
@@ -228,7 +228,7 @@ export default function Timeline() {
       </div>
 
       {/* Progress Bar */}
-      <div className="mb-8 md:mb-16 px-4 md:px-0">
+      <div className="mb-8 md:mb-16">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center">
             <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
@@ -252,9 +252,9 @@ export default function Timeline() {
       </div>
 
       {/* Stage Dots - Horizontal Scroll on Mobile */}
-      <div className="relative mb-8 md:mb-16">
+      <div className="relative mb-8 md:mb-16 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
         <div className="absolute top-1/2 left-0 right-0 h-px bg-gray-200 -translate-y-1/2 hidden md:block" />
-        <div className="flex overflow-x-auto no-scrollbar md:justify-between px-4 md:px-0 pb-4 md:pb-0 gap-4 md:gap-0 snap-x">
+        <div className="flex overflow-x-auto no-scrollbar md:justify-between pb-4 md:pb-0 gap-4 md:gap-0 snap-x">
           {stages.map((s, idx) => (
             <button
               key={idx}
@@ -285,37 +285,40 @@ export default function Timeline() {
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 1.02 }}
-          className="bg-white rounded-2xl md:rounded-3xl p-6 md:p-10 border border-[#e4e4f0] shadow-2xl shadow-blue-900/5 mx-4 md:mx-0"
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-10 border border-[#e4e4f0] shadow-2xl shadow-blue-900/5"
         >
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-            <div className="flex items-center space-x-6">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center shadow-lg shadow-blue-600/20">
-                <stage.icon className="w-8 h-8" />
+          <div>
+            <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 md:gap-6 mb-6 md:mb-8">
+              <div className="flex items-center space-x-4 md:space-x-6">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center shadow-lg shadow-blue-600/20 shrink-0">
+                  <stage.icon className="w-6 h-6 md:w-8 md:h-8" />
+                </div>
+                <div>
+                  <h2 className="text-xl md:text-3xl font-bold text-gray-900 tracking-tight leading-tight">{stage.label}</h2>
+                  <span className="inline-flex items-center mt-1 md:mt-2 px-2.5 py-1 md:px-3 bg-amber-50 text-amber-700 text-[10px] md:text-xs font-bold rounded-full tracking-wider uppercase border border-amber-100">
+                    <ShieldCheck className="w-3 h-3 mr-1.5" />
+                    {stage.timing}
+                  </span>
+                </div>
               </div>
-              <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">{stage.label}</h2>
-                <span className="inline-flex items-center mt-2 px-3 py-1 bg-amber-50 text-amber-700 text-[10px] md:text-xs font-bold rounded-full tracking-wider uppercase border border-amber-100">
-                  <ShieldCheck className="w-3 h-3 mr-1.5" />
-                  {stage.timing}
-                </span>
-              </div>
+            </div>
+
+            <p className="text-sm md:text-lg text-gray-600 mb-6 md:mb-10 leading-relaxed max-w-3xl">
+              {stage.description}
+            </p>
+
+            <div className="grid sm:grid-cols-2 gap-3 md:gap-4 mb-8">
+              {stage.keyFacts.map((fact, i) => (
+                <div key={i} className="flex items-start bg-gray-50/50 p-4 rounded-xl border border-gray-100/50 hover:bg-white hover:shadow-md transition-all group">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-0.5 mr-3 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                  <span className="text-sm md:text-base text-gray-700 font-medium">{fact}</span>
+                </div>
+              ))}
             </div>
           </div>
 
-          <p className="text-base md:text-lg text-gray-600 mb-8 md:mb-10 leading-relaxed max-w-3xl">
-            {stage.description}
-          </p>
-
-          <div className="grid sm:grid-cols-2 gap-3 md:gap-4 mb-8 md:mb-12">
-            {stage.keyFacts.map((fact, i) => (
-              <div key={i} className="flex items-start bg-gray-50/50 p-4 rounded-xl border border-gray-100/50 hover:bg-white hover:shadow-md transition-all group">
-                <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-0.5 mr-3 flex-shrink-0 group-hover:scale-110 transition-transform" />
-                <span className="text-sm md:text-base text-gray-700 font-medium">{fact}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-8 border-t border-gray-100">
+          <div className="flex flex-col-reverse md:flex-row items-stretch md:items-center justify-between gap-3 md:gap-6 pt-6 md:pt-8 border-t border-gray-100">
             <div className="flex space-x-3 order-2 md:order-1 w-full md:w-auto">
               <button
                 disabled={currentStage === 0}
