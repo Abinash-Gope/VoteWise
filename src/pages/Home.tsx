@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { MessageSquare, Calendar, ClipboardCheck, ArrowRight, ChevronRight } from "lucide-react";
-import { motion } from "motion/react";
+import { MessageSquare, Calendar, ClipboardCheck, ArrowRight, ChevronRight, Sparkles, BarChart3, Loader2, CheckCircle, TrendingUp } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import axios from "axios";
 
 const features = [
   {
@@ -29,7 +31,38 @@ const features = [
   },
 ];
 
+interface CivicInsights {
+  summary: string;
+  keyFindings: string[];
+  recommendation: string;
+  engagementScore: number;
+  literacyLevel?: string;
+  nextStep?: string;
+  generatedBy?: string;
+}
+
 export default function Home() {
+  const [insights, setInsights] = useState<CivicInsights | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [insightError, setInsightError] = useState("");
+
+  const handleAnalyzeTrends = async () => {
+    setIsAnalyzing(true);
+    setInsightError("");
+    try {
+      const res = await axios.post("/api/analyze-trends", {
+        region: "US & India",
+        topicsExplored: ["Voter Registration", "Electoral College", "Election Day", "EVM"],
+        sessionDuration: Math.round(performance.now() / 60000),
+      });
+      setInsights(res.data.insights);
+    } catch {
+      setInsightError("Unable to fetch AI insights right now. Please try again.");
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   return (
     <div className="space-y-12 md:space-y-24 pb-12">
       {/* Hero Section */}
@@ -159,6 +192,158 @@ export default function Home() {
                 <div className="w-10 h-px bg-blue-500 mr-4"></div>
                 <cite className="text-blue-300 font-black uppercase text-xs tracking-widest not-italic">VoteWise Mission</cite>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── AI Civic Insights — Powered by Gemini ──────────────────────────── */}
+      <section className="px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center space-x-2 px-4 py-1.5 mb-4 text-xs font-black tracking-[0.2em] text-indigo-600 uppercase bg-indigo-50 border border-indigo-100 rounded-full shadow-sm">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Powered by Gemini AI</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">
+              Civic Engagement Insights
+            </h2>
+            <div className="h-1.5 w-20 bg-indigo-600 mx-auto rounded-full mb-6" />
+            <p className="text-gray-600 font-medium max-w-lg mx-auto">
+              Get real-time AI analysis of civic engagement trends and personalized recommendations for your democracy journey.
+            </p>
+          </div>
+
+          <div className="bg-gradient-to-br from-[#0f172a] to-[#1e3a8a] rounded-[2rem] p-8 md:p-12 text-white relative overflow-hidden shadow-2xl shadow-blue-900/30">
+            {/* Background orbs */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full translate-x-32 -translate-y-32 blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/10 rounded-full -translate-x-32 translate-y-32 blur-3xl pointer-events-none" />
+
+            <div className="relative z-10">
+              {!insights && !isAnalyzing && (
+                <div className="text-center">
+                  <div className="w-20 h-20 bg-white/10 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-white/10">
+                    <BarChart3 className="w-10 h-10 text-blue-300" />
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-black mb-4 tracking-tight">
+                    Analyze Your Civic Journey
+                  </h3>
+                  <p className="text-blue-200/80 mb-10 max-w-md mx-auto font-medium leading-relaxed">
+                    Our Gemini AI will analyze your engagement patterns and provide personalized civic literacy insights.
+                  </p>
+                  <button
+                    id="analyze-trends-btn"
+                    onClick={handleAnalyzeTrends}
+                    className="inline-flex items-center px-10 py-5 bg-white text-[#1e3a8a] rounded-2xl font-black text-base hover:bg-blue-50 transition-all shadow-2xl active:scale-95 group"
+                  >
+                    <Sparkles className="w-5 h-5 mr-3 group-hover:rotate-12 transition-transform" />
+                    Generate AI Insights
+                    <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </div>
+              )}
+
+              {isAnalyzing && (
+                <div className="text-center py-8">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/20"
+                  >
+                    <Loader2 className="w-8 h-8 text-blue-300" />
+                  </motion.div>
+                  <p className="text-blue-200 font-bold text-lg">Gemini AI is analyzing civic trends...</p>
+                  <p className="text-blue-300/60 text-sm mt-2">Processing engagement data with Google AI</p>
+                </div>
+              )}
+
+              {insightError && (
+                <div className="text-center py-4">
+                  <p className="text-rose-300 font-bold mb-4">{insightError}</p>
+                  <button onClick={handleAnalyzeTrends} className="px-6 py-3 bg-white/10 rounded-xl font-bold text-sm hover:bg-white/20 transition-all border border-white/10">
+                    Try Again
+                  </button>
+                </div>
+              )}
+
+              <AnimatePresence>
+                {insights && !isAnalyzing && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    {/* Score + Summary Row */}
+                    <div className="flex flex-col md:flex-row gap-6 mb-8">
+                      <div className="bg-white/10 rounded-2xl p-6 border border-white/10 flex-shrink-0 text-center md:w-48">
+                        <TrendingUp className="w-6 h-6 text-blue-300 mx-auto mb-3" />
+                        <p className="text-[10px] font-black uppercase tracking-widest text-blue-300 mb-1">Engagement</p>
+                        <p className="text-5xl font-black text-white">{insights.engagementScore}</p>
+                        <p className="text-[10px] text-blue-300/70 font-bold mt-1">/ 100</p>
+                        {insights.literacyLevel && (
+                          <span className="inline-block mt-3 px-3 py-1 bg-blue-500/20 rounded-full text-[10px] font-black uppercase tracking-wider text-blue-200 border border-blue-400/20">
+                            {insights.literacyLevel}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-blue-300 mb-3">AI Summary</p>
+                        <p className="text-white/90 font-medium leading-relaxed text-lg">{insights.summary}</p>
+                        {insights.nextStep && (
+                          <div className="mt-4 p-4 bg-white/5 rounded-xl border border-white/10">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-blue-300 mb-1.5">Recommended Next Step</p>
+                            <p className="text-blue-100 text-sm font-medium">{insights.nextStep}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Key Findings */}
+                    <div className="mb-8">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-blue-300 mb-4">Key Findings</p>
+                      <div className="grid sm:grid-cols-2 gap-3">
+                        {insights.keyFindings.map((finding, i) => (
+                          <div key={i} className="flex items-start bg-white/5 rounded-xl p-4 border border-white/10">
+                            <CheckCircle className="w-4 h-4 text-emerald-400 mr-3 mt-0.5 flex-shrink-0" />
+                            <p className="text-white/80 text-sm font-medium leading-relaxed">{finding}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Recommendation */}
+                    <div className="bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-2xl p-6 border border-blue-400/20 mb-6">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-blue-300 mb-2">AI Recommendation</p>
+                      <p className="text-white/90 font-medium leading-relaxed">{insights.recommendation}</p>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <button
+                        onClick={handleAnalyzeTrends}
+                        className="flex items-center justify-center px-6 py-3.5 bg-white/10 rounded-xl font-bold text-sm hover:bg-white/20 transition-all border border-white/10 group"
+                      >
+                        <Sparkles className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
+                        Refresh Analysis
+                      </button>
+                      <Link
+                        to="/chat"
+                        className="flex items-center justify-center px-6 py-3.5 bg-white text-[#1e3a8a] rounded-xl font-black text-sm hover:bg-blue-50 transition-all shadow-lg group"
+                      >
+                        <MessageSquare className="w-4 h-4 mr-2" />
+                        Discuss with AI
+                        <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                      </Link>
+                    </div>
+
+                    {insights.generatedBy && (
+                      <p className="text-[10px] text-blue-400/40 font-bold uppercase tracking-widest mt-6 text-center">
+                        Analysis by {insights.generatedBy} · Google AI/ML Services
+                      </p>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </div>
